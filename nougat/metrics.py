@@ -49,7 +49,7 @@ def compute_metrics(pred, gt, minlen=4):
     if len(pred) < minlen or len(gt) < minlen:
         return metrics
     metrics["edit_dist"] = edit_distance(pred, gt) / max(len(pred), len(gt))
-    metrics["teds"] = teds(gt, pred)
+    # metrics["teds"] = teds(gt, pred)
     reference = gt.split()
     hypothesis = pred.split()
     # metrics["bleu"] = nltk.translate.bleu([reference], hypothesis)

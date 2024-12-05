@@ -98,11 +98,11 @@ class NougatModelPLModule(pl.LightningModule):
             "val/" + key: sum(values) / len(values) for key, values in metrics.items() if key != "teds"
         }
 
-        teds_list = [teds for teds in metrics['teds'] if teds != -1]
-        teds_sum = sum(teds_list)
-        teds_num = len(teds_list)
+        # teds_list = [teds for teds in metrics['teds'] if teds != -1]
+        # teds_sum = sum(teds_list)
+        # teds_num = len(teds_list)
+        # scores["val/teds"] = (teds_sum, teds_num)
         
-        scores["val/teds"] = (teds_sum, teds_num)
         loss = self.model(image_tensors, decoder_input_ids, attention_masks)[0]
         scores['val/loss'] = loss
         self.validation_step_outputs.append(scores)
@@ -122,17 +122,15 @@ class NougatModelPLModule(pl.LightningModule):
                         cumulative_scores[key] = []
                     cumulative_scores[key].append(value)
             
-            # 计算每个指标的平均值
             averaged_scores = {key: sum(values) / len(values) for key, values in cumulative_scores.items() if key != "val/teds"}
-            teds_sum, teds_num = map(sum, zip(*cumulative_scores["val/teds"]))
-            if teds_num != 0:
-                averaged_scores["val/teds"] = teds_sum / teds_num
+            # teds_sum, teds_num = map(sum, zip(*cumulative_scores["val/teds"]))
+            # if teds_num != 0:
+            #     averaged_scores["val/teds"] = teds_sum / teds_num
 
-            print(averaged_scores, teds_num)
-            # 记录所有指标的平均值
+            # print(averaged_scores, teds_num)
+
             self.log_dict(averaged_scores, sync_dist=True)
 
-            # 清空用于本轮的输出存储
             self.validation_step_outputs.clear()
 
         if self.current_epoch >= self.config.save_epoch:
